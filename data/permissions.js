@@ -1,7 +1,7 @@
 let permissions = [
-    {id:1, text: "hacer compra", approbedBy: [], userId:1
+    {id:1, text: "hacer compra", approvedBy: [], userId:1
     },
-    {id:2, text: "hacer dos compras", approbedBy: [], userId:2
+    {id:2, text: "hacer dos compras", approvedBy: [], userId:2
     }
 ]
 
