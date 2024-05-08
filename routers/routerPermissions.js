@@ -1,5 +1,5 @@
 const express = require("express")
-const permissions = require("../data/permissions")
+let permissions = require("../data/permissions")
 const routerPermissions = express.Router()
 let users = require("../data/users")
 let authorizers = require("../data/authorizers")
@@ -100,6 +100,22 @@ routerPermissions.post("/",(req,res)=>{
     })
 
     res.json({id: lastId+1})
+})
+
+routerPermissions.delete("/:id",(req,res)=>{
+    let permissionId = req.params.id
+
+    if(permissionId==undefined)
+        return res.status(400).json({error: "no id"})
+
+    let permission=permissions.find(p=>p.id==permissionId)
+
+    if(permission==undefined)
+        return res.status(400).json({error: "no permission with this id"})
+
+    permissions=permissions.filter(p=>p.id!=permissionId)
+
+    res.json({deleted: true})
 })
 
 module.exports = routerPermissions
