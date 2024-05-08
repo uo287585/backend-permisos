@@ -47,6 +47,25 @@ routerPermissions.put("/:id/approvedBy",(req,res)=>{
     res.json(permission)
 })
 
+routerPermissions.put("/:id",(req,res)=>{
+    let permissionId = req.params.id
+    let text = req.body.text
+
+    if(permissionId==undefined)
+        return res.status(400).json({error: "no id"})
+
+    let permission=permissions.find(p=>p.id==permissionId)
+    if(permission==undefined)
+        return res.status(400).json({error: "no permission with this id"})
+
+    //quieres modificar el texto del permiso
+    if(text!=undefined){
+        permission.text=text
+    }
+
+    res.json({modified: true})
+})
+
 routerPermissions.post("/",(req,res)=>{
     let text = req.body.text
     let userEmail = req.body.userEmail
