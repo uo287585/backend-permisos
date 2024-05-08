@@ -6,15 +6,6 @@ let authorizers = require("../data/authorizers")
 let jwt = require("jsonwebtoken")
 
 routerPermissions.get("/", (req,res)=>{
-    let apiKey = req.query.apiKey
-    let infoApiKey = null
-    
-    try{
-        infoApiKey=jwt.verify(apiKey,"secret")
-    }
-    catch(error){
-        return res.status(401).json({error:"invalid token"})
-    }
 
     let text = req.query.text
     if(text!=undefined){
@@ -25,16 +16,6 @@ routerPermissions.get("/", (req,res)=>{
 })
 
 routerPermissions.get("/:id", (req,res)=>{
-    let apiKey = req.query.apiKey
-    let infoApiKey = null
-    
-    try{
-        infoApiKey=jwt.verify(apiKey,"secret")
-    }
-    catch(error){
-        return res.status(401).json({error:"invalid token"})
-    }
-
     let id = req.params.id
     if(id == undefined){
         return res.status(400).json({error: "no id"})
@@ -47,15 +28,7 @@ routerPermissions.get("/:id", (req,res)=>{
 })
 
 routerPermissions.put("/:id/approvedBy",(req,res)=>{
-    let apiKey = req.query.apiKey
-    let infoApiKey = null
-    
-    try{
-        infoApiKey=jwt.verify(apiKey,"secret")
-    }
-    catch(error){
-        return res.status(401).json({error:"invalid token"})
-    }
+    let infoApiKey=req.infoApiKey
     let user = users.find(u=>u.id=infoApiKey.id)
 
     if(user.role!="admin")
@@ -69,21 +42,13 @@ routerPermissions.put("/:id/approvedBy",(req,res)=>{
     }
 
     let permission = permissions.find(p=>p.id=permissionId && p.userId==infoApiKey.id)
-    permission.approvedBy.push(authorizer.id)
+    permission.approvedBy.push(infoApiKey.id)
 
     res.json(permission)
 })
 
 routerPermissions.put("/:id",(req,res)=>{
-    let apiKey = req.query.apiKey
-    let infoApiKey = null
-    
-    try{
-        infoApiKey=jwt.verify(apiKey,"secret")
-    }
-    catch(error){
-        return res.status(401).json({error:"invalid token"})
-    }
+    let infoApiKey=req.infoApiKey
 
     let permissionId = req.params.id
     let text = req.body.text
@@ -105,15 +70,7 @@ routerPermissions.put("/:id",(req,res)=>{
 
 routerPermissions.post("/",(req,res)=>{
     let text = req.body.text
-    let apiKey = req.query.apiKey
-    let infoApiKey = null
-
-    try{
-        infoApiKey=jwt.verify(apiKey,"secret")
-    }
-    catch(error){
-        return res.status(401).json({error:"invalid token"})
-    }
+    let infoApiKey=req.infoApiKey
      
 
     if (text == undefined){
@@ -133,15 +90,6 @@ routerPermissions.post("/",(req,res)=>{
 })
 
 routerPermissions.delete("/:id",(req,res)=>{
-    let apiKey = req.query.apiKey
-    let infoApiKey = null
-    
-    try{
-        infoApiKey=jwt.verify(apiKey,"secret")
-    }
-    catch(error){
-        return res.status(401).json({error:"invalid token"})
-    }
     
     let permissionId = req.params.id
 
@@ -152,6 +100,10 @@ routerPermissions.delete("/:id",(req,res)=>{
 
     if(permission==undefined)
         return res.status(400).json({error: "no permission with this id"})
+
+    let user = users.find(u=>u.id==req.infoApiKey.id)
+    if(permissions.userId!=user.id && user.role=="user")
+        return res.status(401).json({error: "it is not your permission"})
 
     permissions=permissions.filter(p=>p.id!=permissionId)
 
