@@ -5,6 +5,11 @@ let users = require("../data/users")
 let authorizers = require("../data/authorizers")
 
 routerPermissions.get("/", (req,res)=>{
+    let text = req.query.text
+    if(text!=undefined){
+        let permissionsText=permissions.filter(p=>p.text.includes(text))
+        return res.json(permissionsText)
+    }
     res.json(permissions)
 })
 
