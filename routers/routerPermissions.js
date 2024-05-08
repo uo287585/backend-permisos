@@ -8,6 +8,18 @@ routerPermissions.get("/", (req,res)=>{
     res.json(permissions)
 })
 
+routerPermissions.get("/:id", (req,res)=>{
+    let id = req.params.id
+    if(id == undefined){
+        return res.status(400).json({error: "no id"})
+    }
+    let permission = permissions.find(u=>u.id==id)
+    if(permission==undefined){
+        return res.status(400).json({error: "invalid id"})
+    }
+    res.json(permission)
+})
+
 routerPermissions.put("/:id/approvedBy",(req,res)=>{
     let permissionId = req.params.id
     let authorizerEmail = req.body.authorizerEmail
