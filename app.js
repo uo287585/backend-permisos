@@ -7,6 +7,8 @@ let port = 8081
 //leer datos del body en formato json
 app.use(express.json())
 
+app.use(express.static("public"))
+
 //middleware
 app.use(["/permissions"],(req,res,next)=>{
     console.log("middleware execution")
